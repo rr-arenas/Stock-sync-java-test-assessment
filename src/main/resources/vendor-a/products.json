@@ -1,0 +1,14 @@
+[
+  {"sku":"ABC123","name":"Product A","stockQuantity":8},
+  {"sku":"XYZ456","name":"Product B","stockQuantity":0},
+  {"sku":"LMN789","name":"Product C","stockQuantity":0},
+  {"sku":"DEF111","name":"Product D","stockQuantity":22},
+  {"sku":"GHI222","name":"Product E","stockQuantity":0},
+  {"sku":"JKL333","name":"Product F","stockQuantity":7},
+  {"sku":"MNO444","name":"Product G","stockQuantity":15},
+  {"sku":"PQR555","name":"Product H","stockQuantity":3},
+  {"sku":"STU666","name":"Product I","stockQuantity":0},
+  {"sku":"VWX777","name":"Product J","stockQuantity":100},
+  {"sku":"YZA888","name":"Product K","stockQuantity":1},
+  {"sku":"BCD999","name":"Product L","stockQuantity":42}
+]
