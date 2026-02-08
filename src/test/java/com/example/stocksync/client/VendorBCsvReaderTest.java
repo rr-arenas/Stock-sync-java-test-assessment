@@ -9,7 +9,6 @@ import java.nio.file.Path;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class VendorBCsvReaderTest {
 
@@ -53,12 +52,15 @@ class VendorBCsvReaderTest {
 	}
 
 	@Test
-	void read_throwsWhenFileNotFound() {
+	void read_usesClasspathFallbackWhenFileNotFound() throws IOException {
 		VendorBCsvReader reader = new VendorBCsvReader("/nonexistent/vendor-b/stock.csv");
 
-		assertThatThrownBy(reader::read)
-				.isInstanceOf(IOException.class)
-				.hasMessageContaining("not found");
+		List<VendorProductRow> rows = reader.read();
+
+		// Fallback to classpath vendor-b/stock.csv
+		assertThat(rows).isNotEmpty();
+		assertThat(rows.get(0).sku()).isNotBlank();
+		assertThat(rows.get(0).stockQuantity()).isNotNull();
 	}
 
 	@Test

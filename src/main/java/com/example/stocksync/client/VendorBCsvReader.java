@@ -4,34 +4,42 @@ import com.example.stocksync.dto.VendorProductRow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-
 
 @Component
 public class VendorBCsvReader {
 
 	private static final Logger log = LoggerFactory.getLogger(VendorBCsvReader.class);
 	private static final String HEADER = "sku,name,stockQuantity";
+	private static final String FALLBACK_RESOURCE = "vendor-b/stock.csv";
 
 	private final String csvPath;
 
 	public VendorBCsvReader(@Value("${vendor.b.csv-path:/tmp/vendor-b/stock.csv}") String csvPath) {
 		this.csvPath = csvPath;
 	}
+
 	public List<VendorProductRow> read() throws IOException {
+		List<String> lines;
 		Path path = Path.of(csvPath);
-		if (!Files.exists(path)) {
-			throw new IOException("Vendor B CSV file not found: " + csvPath);
+		if (Files.exists(path)) {
+			lines = Files.readAllLines(path);
+		} else {
+			log.info("Vendor B CSV not found at {}, using classpath fallback {}", csvPath, FALLBACK_RESOURCE);
+			lines = readFromClasspath();
 		}
 
 		List<VendorProductRow> rows = new ArrayList<>();
-		List<String> lines = Files.readAllLines(path);
 
 		if (lines.isEmpty()) {
 			return rows;
@@ -54,6 +62,13 @@ public class VendorBCsvReader {
 		}
 
 		return rows;
+	}
+
+	private List<String> readFromClasspath() throws IOException {
+		ClassPathResource resource = new ClassPathResource(FALLBACK_RESOURCE);
+		try (var reader = new BufferedReader(new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8))) {
+			return reader.lines().toList();
+		}
 	}
 
 	private VendorProductRow parseLine(String line, int lineNumber) {

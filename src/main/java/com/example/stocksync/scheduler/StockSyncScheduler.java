@@ -18,7 +18,7 @@ public class StockSyncScheduler {
 		this.stockSyncService = stockSyncService;
 	}
 
-	@Scheduled(cron = "${stock.sync.cron:0 */5 * * * ?}")
+	@Scheduled(cron = "${stock.sync.cron:*/10 * * * * ?}")
 	public void runSync() {
 		log.debug("Starting scheduled stock sync");
 		try {
